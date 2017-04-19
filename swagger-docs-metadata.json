@@ -1,0 +1,12 @@
+{
+  "uploads": {
+    "so": {
+      "iam": [
+        {
+          "version": "v4",
+          "filename": "so-iam-v4.yaml"
+        }
+      ]
+    }
+  }
+}
