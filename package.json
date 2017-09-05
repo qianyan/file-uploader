@@ -13,6 +13,7 @@
   "author": "lambeta",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.4",
     "express": "^4.15.2",
     "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",

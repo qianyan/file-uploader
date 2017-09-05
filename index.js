@@ -1,5 +1,6 @@
 const express = require('express');
 const multer = require('multer');
+const cors = require('cors');
 const winston = require('winston');
 const mkdirp = require('mkdirp');
 const fs = require('fs');
@@ -22,7 +23,7 @@ const storage = multer.diskStorage({
                         return _.sortBy(_.uniqBy(objValue.concat(srcValue), it), it) ;
                     }
                 });
-                fs.writeFile('swagger-path.json', JSON.stringify(newSwagger, null, 2), (err) => {
+                fs.writeFile('swagger-docs-metadata.json', JSON.stringify(newSwagger, null, 2), (err) => {
                     if (err) throw err;
                     cb(null, dest)
                     console.log('It\'s saved!');
@@ -101,12 +102,12 @@ const upload = multer({storage: storage, fileFilter: filter});
 
 var app = express();
 
+app.use(cors())
 app.post('/docs', upload.any(), function(req, res, next) {
     res.redirect('back');
 })
 
 app.use(express.static('./'))
-
 app.listen(3000, function() {
     console.log('the upload server is started on http://localhost:3000')
 });
