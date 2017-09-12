@@ -6,38 +6,40 @@ const mkdirp = require('mkdirp');
 const fs = require('fs');
 const p = require('path');
 const _ = require('lodash');
-var swaggerPath = require('./swagger-docs-metadata.json');
+var swaggerMetaData = require('./swagger-docs-metadata.json');
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
         var dirs = prefix(file.originalname).split('-');
     
         var dest = p.join('uploads/', p.join.apply(null, dirs));
+        // create target dir and make parent dirs if not exists
         mkdirp(dest, function(err) {
             if(err) {
                 winston.log('error', 'can not mkdir for %s', dest)
             } else {
-                const newSwagger = _.mergeWith(swaggerPath, metaOf(dest, file.originalname, p.sep), (objValue, srcValue) => {
+                swaggerMetaData = _.mergeWith(swaggerMetaData, metaOf(dest, file.originalname, p.sep), (objValue, srcValue) => {
                     if (_.isArray(objValue)) {
                         var it = item => item.version;
                         return _.sortBy(_.uniqBy(objValue.concat(srcValue), it), it) ;
                     }
                 });
-                fs.writeFile('swagger-docs-metadata.json', JSON.stringify(newSwagger, null, 2), (err) => {
+
+                fs.writeFile('swagger-docs-metadata.json', JSON.stringify(swaggerMetaData, null, 2), (err) => {
                     if (err) throw err;
-                    cb(null, dest)
+                    cb(null, dest);
                     console.log('It\'s saved!');
                 });
             }
         });
     },
    filename: function(req, file, cb) {
-       cb(null, file.originalname)
+       cb(null, file.originalname);
    }
 });
 
 function metaOf(swaggerPath, filename, sep) {
-    var keys = swaggerPath.split(sep)
+    var keys = swaggerPath.split(sep);
     var parent, result = {};
     parent = result;
     
